@@ -28,7 +28,3 @@ read -p "Try again, Please enter second number: " SECOND
 done
 let SUM=$FIRST$SYMBOL$SECOND
 echo "Result: $SUM "
-
-
-
-source /root/calculator.sh
