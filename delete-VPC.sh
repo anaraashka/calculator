@@ -14,7 +14,7 @@ aws ec2 delete-subnet --subnet-id $PUBLICSUBNET
 echo "Public Subnet has been deleted!"
 sleep 2
 
-PUBLICRT=$(aws ec2 describe-route-tables --filters 'Name=vpc-id,Values='$VpcID --query 'RouteTables[*].RouteTableId[]' --output text | awk '{print $2}')
+PUBLICRT=$(aws ec2 describe-route-tables --filters 'Name=vpc-id,Values='$VpcID --query 'RouteTables[*].RouteTableId[]' --output text | awk '{print $1}')
 aws ec2 delete-route-table --route-table-id $PUBLICRT
 echo "Public Route Table has been deleted!"
 sleep 2
