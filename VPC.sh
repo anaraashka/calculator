@@ -38,8 +38,10 @@ sleep 1
 # 4) Public Route table and Private Route Table ($PRIVATER $PUBLICR)
 #   -attach subnets to particular route tables
 read -p "Name of Private  Route-Table:     " RTABLE1
-PRIVATER=$(aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPCID" --query 'RouteTables[*].Associations[*].RouteTableId[]' --output text)
-
+PRIVATER=$(aws ec2 describe-route-tables --filters "Name=vpc-id,Values=vpc-04ac85722800ea099" "Name=association.main, Values=true" --query 'RouteTables[*].Associations[*].RouteTableId[]' --output text | awk '{print $1}')
+aws ec2 create-tags --resources $PRIVATER --tags 'Key=Name, Value='$RTABLE1
+echo "Added tag to the main Route Table"
+sleep2
 read -p "Name of Public Route-Table:    " RTABLE2
 PUBLICR=$(aws ec2 create-route-table --vpc-id $VPCID --query RouteTable.RouteTableId --output text --tag-specifications ResourceType=route-table,Tags="[{Key=Name,Value=$RTABLE2}]")
 
