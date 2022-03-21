@@ -38,19 +38,17 @@ sleep 1
 # 4) Public Route table and Private Route Table ($PRIVATER $PUBLICR)
 #   -attach subnets to particular route tables
 read -p "Name of Private  Route-Table:     " RTABLE1
-PRIVATER=$(aws ec2 describe-route-tables --filters "Name=vpc-id,Values=vpc-04ac85722800ea099" "Name=association.main, Values=true" --query 'RouteTables[*].Associations[*].RouteTableId[]' --output text | awk '{print $1}')
+PRIVATER=$(aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPCID" "Name=association.main, Values=true" --query 'RouteTables[*].Associations[*].RouteTableId[]' --output text | awk '{print $1}')
 aws ec2 create-tags --resources $PRIVATER --tags 'Key=Name, Value='$RTABLE1
 echo "Added tag to the main Route Table"
 sleep2
 read -p "Name of Public Route-Table:    " RTABLE2
-PUBLICR=$(aws ec2 create-route-table --vpc-id $VPCID --query RouteTable.RouteTableId --output text --tag-specifications ResourceType=route-table,Tags="[{Key=Name,Value=$RTABLE2}]")
+PUBLICR=$(aws ec2 create-route-table --vpc-id $VPCID --tag-specifications ResourceType=route-table,Tags="[{Key=Name,Value=$RTABLE2}]" --query RouteTable.RouteTableId --output text)
+echo -e "Created \"$RTABLE2\" route table successful!"
 
 aws ec2 associate-route-table  --subnet-id $PRIVATES --route-table-id $PRIVATER > Private_RT.json
 echo -e "\"$SUBNET1\" subnet associated with \"$RTABLE1\" successful!"
 aws ec2 associate-route-table  --subnet-id $PUBLICS --route-table-id $PUBLICR > Public_RT.json
-echo "$SUBNET2 subnet associated with $RTABLE2 successful!"
+echo "\"$SUBNET2\" subnet associated with \"$RTABLE2\" successful!"
 sleep 2
 echo "TASK COMPLETED!!!"
-
-
-
